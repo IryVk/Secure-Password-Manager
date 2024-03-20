@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Debug files
+src/csv_boilerplate.cpp
