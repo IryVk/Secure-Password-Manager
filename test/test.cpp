@@ -190,7 +190,6 @@ protected:
 TEST_F(CSVReaderTest, LoadCSV) {
     CSVReader reader(hashtable, testFilename);
     reader.load();
-    // example check: verify that a known row from the CSV was loaded correctly
     EXPECT_TRUE(hashtable.find("domain1.com"));
 }
 
@@ -198,7 +197,7 @@ TEST_F(CSVReaderTest, SaveCSV) {
     CSVReader reader(hashtable, testFilename);
     reader.load();
 
-    // modify the hashtable in some way
+    // modify the hashtable
     reader.addRow("domain4.com", "user4", "password4");
     reader.save();
 
@@ -223,6 +222,7 @@ TEST_F(CSVReaderTest, AddRow) {
 
 TEST_F(CSVReaderTest, UpdateRow) {
     CSVReader reader(hashtable, testFilename);
+    reader.load();
     reader.updateRow("domain1.com", "user1", "newPassword");
     reader.save();
 
@@ -230,7 +230,11 @@ TEST_F(CSVReaderTest, UpdateRow) {
     HashTable newHashTable;
     CSVReader newReader(newHashTable, testFilename);
     newReader.load();
-    // assuming HashTable or LinkedList has a method to verify password change
+    Bucket* bucket = newHashTable.getBucket("domain1.com");
+    ASSERT_NE(bucket, nullptr);
+    Node* node = bucket->list.getNode("domain1.com", "user1");
+    ASSERT_NE(node, nullptr);
+    EXPECT_EQ(node->data[2], "newPassword");
 }
 
 TEST_F(CSVReaderTest, DeleteRow) {
