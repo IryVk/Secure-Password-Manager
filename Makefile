@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++14 -Iinclude
 
 # Name of the executable
-TARGET = bin/csvreader.exe
+TARGET = bin/main.exe
 
 # Source directory
 SRC_DIR = src
