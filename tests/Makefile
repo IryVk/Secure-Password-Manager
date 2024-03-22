@@ -31,7 +31,7 @@ ifneq ("$(wildcard $(MAIN_OBJ))","")
 endif
 
 # Target executable for tests
-TARGET = run_tests
+TARGET = run_tests.exe
 
 # Default rule
 all: $(TARGET)
