@@ -22,7 +22,7 @@ public:
     bool isEmpty() const;
     int size() const;
     bool find(const std::string& key) const;
-    bool remove(const std::string& key);
+    bool remove(const std::string& domain, const std::string& username);
     bool update(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername = "");
     Node *getHead() const;
     Node *getNode(const std::string& domain, const std::string& user) const;

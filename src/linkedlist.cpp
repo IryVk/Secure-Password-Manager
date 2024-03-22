@@ -1,8 +1,19 @@
 #include "linkedlist.h"
 
+#include <algorithm> 
+#include <cctype>
+
+// utility function for case-insensitive string comparison
+bool equalsIgnoreCase(const std::string& a, const std::string& b) {
+    if (a.length() != b.length()) return false;
+    for (size_t i = 0; i < a.length(); ++i) {
+        if (std::tolower(a[i]) != std::tolower(b[i])) return false;
+    }
+    return true;
+}
+
 // constructor
 LinkedList::LinkedList() : head(nullptr) {}
-
 
 // destructor
 LinkedList::~LinkedList() {
@@ -67,37 +78,27 @@ bool LinkedList::find(const std::string& key) const {
 }
 
 // remove a key from the linked list
-bool LinkedList::remove(const std::string& key) {
-    Node *current = head, *prev = nullptr;
-    while (current != nullptr) {
-        if (current->data[0] == key) {
-            if (prev == nullptr) {
-                // key found at head
-                head = current->next;
+bool LinkedList::remove(const std::string& domain, const std::string& username) {
+    Node* current = getNode(domain, username);
+    if (current != nullptr) {
+        // check if both domain and username match (case-insensitive)
+        if (equalsIgnoreCase(current->data[0], domain) && equalsIgnoreCase(current->data[1], username)) {
+            if (current == head) {
+                head = current->next; // update head
             } else {
-                // key found after head
-                prev->next = current->next;
+                Node* prev = head;
+                while (prev->next != current) {
+                    prev = prev->next;
+                }
+                prev->next = current->next; // update previous node's next pointer
             }
-            delete current; // free the memory of the node
-            return true; // key was found and removed
+            delete current; // delete current node
+            return true; // successfully removed
         }
-        prev = current;
-        current = current->next;
     }
-    return false; // Key not found
+    return false; // identifiers not found
 }
 
-#include <algorithm> 
-#include <cctype>
-
-// utility function for case-insensitive string comparison
-bool equalsIgnoreCase(const std::string& a, const std::string& b) {
-    if (a.length() != b.length()) return false;
-    for (size_t i = 0; i < a.length(); ++i) {
-        if (std::tolower(a[i]) != std::tolower(b[i])) return false;
-    }
-    return true;
-}
 
 // update a domain, username, and password
 bool LinkedList::update(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername) {

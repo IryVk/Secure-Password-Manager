@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
-// #include "csvreader.h"
+#include "csvreader.h"
 #include "linkedlist.h"
 #include <sstream>
 #include <string>
 #include <hashtable.h>
+#include <fstream>
+#include <filesystem>
 
 // utility function to capture std::cout output
 std::string capturePrintOutput(LinkedList& list) {
@@ -64,13 +66,13 @@ TEST_F(LinkedListTest, FindExistingElement) {
 }
 
 TEST_F(LinkedListTest, RemoveNonExistentElement) {
-    EXPECT_FALSE(list.remove("nonexistent"));
+    EXPECT_FALSE(list.remove("nonexistent", ""));
 }
 
 TEST_F(LinkedListTest, RemoveExistingElement) {
     list.add("key1", "", "");
     list.add("key2", "", "");
-    EXPECT_TRUE(list.remove("key1"));
+    EXPECT_TRUE(list.remove("key1", ""));
     EXPECT_FALSE(list.find("key1")); // verify key1 is no longer in the list
     EXPECT_TRUE(list.find("key2")); // verify key2 is still in the list
 }
@@ -136,7 +138,7 @@ TEST_F(HashTableTest, FindNonExistent) {
 TEST_F(HashTableTest, InsertAndRemove) {
     ht->insert("testKey");
     EXPECT_TRUE(ht->find("testKey"));
-    ht->remove("testKey");
+    ht->remove("testKey", "");
     EXPECT_FALSE(ht->find("testKey"));
 }
 
@@ -163,5 +165,83 @@ TEST_F(HashTableTest, Update) {
 }
 
 // ==================== CSVReader Tests ====================
+namespace fs = std::filesystem;
 
+class CSVReaderTest : public ::testing::Test {
+protected:
+    HashTable hashtable;
+    std::string testFilename = "../assets/test_data.csv"; // Path to your test CSV file
+
+    void SetUp() override {
+        // create a temporary CSV file for testing
+        std::ofstream outFile(testFilename);
+        outFile << "495676536135009626,domain1.com,user1,password1\n";
+        outFile << "495676536136883787,domain2.com,user2,password2\n";
+        outFile << "495676536138757948,domain3.com,user3,password3\n";
+        outFile.close();
+    }
+
+    void TearDown() override {
+        // Cleanup: remove the test file
+        fs::remove(testFilename);
+    }
+};
+
+TEST_F(CSVReaderTest, LoadCSV) {
+    CSVReader reader(hashtable, testFilename);
+    reader.load();
+    // example check: verify that a known row from the CSV was loaded correctly
+    EXPECT_TRUE(hashtable.find("domain1.com"));
+}
+
+TEST_F(CSVReaderTest, SaveCSV) {
+    CSVReader reader(hashtable, testFilename);
+    reader.load();
+
+    // modify the hashtable in some way
+    reader.addRow("domain4.com", "user4", "password4");
+    reader.save();
+
+    // reload and check if the new row exists
+    HashTable newHashTable;
+    CSVReader newReader(newHashTable, testFilename);
+    newReader.load();
+    EXPECT_TRUE(newHashTable.find("domain4.com"));
+}
+
+TEST_F(CSVReaderTest, AddRow) {
+    CSVReader reader(hashtable, testFilename);
+    reader.addRow("domain4.com", "user4", "password4");
+    reader.save();
+
+    // verify addition
+    HashTable newHashTable;
+    CSVReader newReader(newHashTable, testFilename);
+    newReader.load();
+    EXPECT_TRUE(newHashTable.find("domain4.com"));
+}
+
+TEST_F(CSVReaderTest, UpdateRow) {
+    CSVReader reader(hashtable, testFilename);
+    reader.updateRow("domain1.com", "user1", "newPassword");
+    reader.save();
+
+    // verify update
+    HashTable newHashTable;
+    CSVReader newReader(newHashTable, testFilename);
+    newReader.load();
+    // assuming HashTable or LinkedList has a method to verify password change
+}
+
+TEST_F(CSVReaderTest, DeleteRow) {
+    CSVReader reader(hashtable, testFilename);
+    reader.deleteRow("domain1.com", "user1");
+    reader.save();
+
+    // verify deletion
+    HashTable newHashTable;
+    CSVReader newReader(newHashTable, testFilename);
+    newReader.load();
+    EXPECT_FALSE(newHashTable.find("domain1.com"));
+}
 

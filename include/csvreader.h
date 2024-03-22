@@ -1,19 +1,19 @@
-#ifndef CSVREADER_H
-#define CSVREADER_H
-
 #include "hashtable.h"
 #include <fstream>
 #include <sstream>
 #include <string>
 
 class CSVReader {
-    HashTable hashtable;
+private:
+    HashTable& hashtable;
+    std::string filename;
 
 public:
-    CSVReader();
-    void loadCSV(const std::string& filename);
-    void updateRow(const std::string& hash, const std::string& domain, const std::string& username, const std::string& password);
-    void deleteRow(const std::string& hash);
-};
+    CSVReader(HashTable& hashtable, const std::string& filename) : hashtable(hashtable), filename(filename) {}
 
-#endif // CSVREADER_H
+    void load();
+    void save();
+    void addRow(const std::string& domain, const std::string& username, const std::string& password);
+    void updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername="");
+    void deleteRow(const std::string& domain, const std::string& username);
+};

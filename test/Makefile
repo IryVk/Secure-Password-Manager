@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++14 -I../include -lgtest -lgtest_main -pthread -L../lib
+CXXFLAGS = -Wall -std=c++17 -I../include -lgtest -lgtest_main -pthread -L../lib
 
 # Google Test flags
 GTEST_FLAGS = -lgtest -pthread

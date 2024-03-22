@@ -18,6 +18,13 @@ size_t HashTable::hash(const std::string& key) const {
     }
     return hashValue % numBuckets;
 }
+size_t HashTable::hashNoMod(const std::string& key) const {
+    size_t hashValue = 0;
+    for (char c : key) {
+        hashValue = 37 * hashValue + c; // 37 is a prime number
+    }
+    return hashValue;
+}
 
 // insert a key into the hash table
 void HashTable::insert(const std::string& domain, const std::string& username, const std::string& password) {
@@ -32,9 +39,9 @@ bool HashTable::find(const std::string& key) const {
 }
 
 // remove a key from the hash table
-void HashTable::remove(const std::string& key) {
-    size_t index = hash(key);
-    buckets[index].list.remove(key); // removes based on the first string in each node's array
+void HashTable::remove(const std::string& domain, const std::string& username) {
+    size_t index = hash(domain);
+    buckets[index].list.remove(domain, username); // removes based on the first string in each node's array
 }
 
 // insert a domain, username, and password at a specific index in the hash table
@@ -60,7 +67,7 @@ Bucket* HashTable::getBuckets() const {
 }
 
 // get a specific bucket at an index
-Bucket* HashTable::getBucket(const std::string domain) const {
+Bucket* HashTable::getBucket(const std::string& domain) const {
     size_t index = hash(domain);
     if (index >= numBuckets) return nullptr; // index out of bounds check
     return &buckets[index];
