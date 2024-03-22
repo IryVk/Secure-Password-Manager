@@ -2,7 +2,10 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++14 -Iinclude
+CXXFLAGS = -Wall -std=c++14 -Iinclude -I/usr/include/crypto++
+
+# Linker flags
+LDFLAGS = -lcrypto -lcryptopp
 
 # Name of the executable
 TARGET = bin/main.exe
@@ -24,12 +27,12 @@ all: $(TARGET)
 
 # Rule to make the executable
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
 
 # Rule to compile object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Rule to clean up
 clean:

@@ -1,11 +1,17 @@
 #include <gtest/gtest.h>
 #include "csvreader.h"
 #include "linkedlist.h"
+#include "aes-gcm.h"
 #include <sstream>
 #include <string>
 #include <hashtable.h>
 #include <fstream>
 #include <filesystem>
+#include "aes-gcm.h"
+#include "cryptlib.h"
+#include "osrng.h"
+
+using namespace CryptoPP;
 
 // utility function to capture std::cout output
 std::string capturePrintOutput(LinkedList& list) {
@@ -249,3 +255,57 @@ TEST_F(CSVReaderTest, DeleteRow) {
     EXPECT_FALSE(newHashTable.find("domain1.com"));
 }
 
+// ==================== AES-GCM Tests ====================
+class AESCryptoTest : public ::testing::Test {
+protected:
+    std::string plaintextFilename = "plaintext.tmp";
+    std::string encryptedFilename = "encrypted.tmp";
+    std::string decryptedFilename = "decrypted.tmp";
+    AESCrypto* crypto = nullptr;
+
+    void SetUp() override {
+        // generate a random key and IV for testing
+        AutoSeededRandomPool prng;
+        SecByteBlock key(AES::DEFAULT_KEYLENGTH);
+        prng.GenerateBlock(key, key.size());
+
+        SecByteBlock iv(AES::BLOCKSIZE);
+        prng.GenerateBlock(iv, iv.size());
+
+        crypto = new AESCrypto(key, iv);
+
+        // create and write to the plaintext file
+        std::ofstream out(plaintextFilename);
+        out << "This is a test string to encrypt and decrypt using AES-GCM.";
+        out.close();
+    }
+
+    void TearDown() override {
+        delete crypto;
+        // Remove temporary files
+        remove(plaintextFilename.c_str());
+        remove(encryptedFilename.c_str());
+        remove(decryptedFilename.c_str());
+    }
+};
+
+TEST_F(AESCryptoTest, EncryptDecryptFile) {
+    // encrypt the plaintext file
+    crypto->EncryptFile(plaintextFilename, encryptedFilename);
+
+    // decrypt the encrypted file
+    crypto->DecryptFile(encryptedFilename, decryptedFilename);
+
+    // eead decrypted content
+    std::ifstream in(decryptedFilename);
+    std::string decrypted((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    in.close();
+
+    // eead original content for comparison
+    std::ifstream inOrig(plaintextFilename);
+    std::string original((std::istreambuf_iterator<char>(inOrig)), std::istreambuf_iterator<char>());
+    inOrig.close();
+
+    // compare decrypted content with the original plaintext
+    EXPECT_EQ(original, decrypted);
+}

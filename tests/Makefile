@@ -2,7 +2,10 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++17 -I../include -lgtest -lgtest_main -pthread -L../lib
+CXXFLAGS = -Wall -std=c++17 -Wno-deprecated-declarations -I../include -I/usr/include/crypto++ -lgtest -lgtest_main -pthread -L../lib
+
+# Linker flags
+LDFLAGS = -lcrypto -lcryptopp
 
 # Google Test flags
 GTEST_FLAGS = -lgtest -pthread
@@ -37,8 +40,8 @@ TARGET = run_tests.exe
 all: $(TARGET)
 
 $(TARGET): $(TEST_OBJECTS)
-	$(CXX) $(CXXFLAGS) $(GTEST_INCLUDE) -o $(TARGET) $(TEST_OBJECTS) $(SRC_OBJECTS) $(GTEST_FLAGS) -L../lib
-	./$(TARGET)
+	$(CXX) $(CXXFLAGS) $(GTEST_INCLUDE) -o $(TARGET) $(TEST_OBJECTS) $(SRC_OBJECTS) $(GTEST_FLAGS) -L../lib $(LDFLAGS)
+	./$(TARGET) 
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(GTEST_INCLUDE) -c $< -o $@
