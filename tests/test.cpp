@@ -10,6 +10,8 @@
 #include "aes-gcm.h"
 #include "cryptlib.h"
 #include "osrng.h"
+#include "passhash.h"
+#include "userhandler.h"
 
 using namespace CryptoPP;
 
@@ -301,11 +303,117 @@ TEST_F(AESCryptoTest, EncryptDecryptFile) {
     std::string decrypted((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
     in.close();
 
-    // eead original content for comparison
+    // read original content for comparison
     std::ifstream inOrig(plaintextFilename);
     std::string original((std::istreambuf_iterator<char>(inOrig)), std::istreambuf_iterator<char>());
     inOrig.close();
 
     // compare decrypted content with the original plaintext
     EXPECT_EQ(original, decrypted);
+}
+
+// ==================== Hash Tests ====================
+class PasswordHasherTest : public ::testing::Test {
+protected:
+};
+
+// tests that the generated salt is of the correct length
+TEST_F(PasswordHasherTest, GeneratesCorrectSaltLength) {
+    auto salt = PasswordHasher::GenerateRandomSalt(16); // 16 bytes = 32 hex characters
+    EXPECT_EQ(salt.length(), 32u);
+}
+
+// tests that generated salts are unique
+TEST_F(PasswordHasherTest, GeneratesUniqueSalts) {
+    std::set<std::string> salts;
+    const size_t numSalts = 100;
+    for (size_t i = 0; i < numSalts; ++i) {
+        auto salt = PasswordHasher::GenerateRandomSalt(16);
+        salts.insert(salt);
+    }
+    EXPECT_EQ(salts.size(), numSalts);
+}
+
+// tests that HashPassword includes the salt in its output and produces a consistent hash for the same input
+TEST_F(PasswordHasherTest, HashIncludesSaltAndIsConsistent) {
+    std::string password = "testPassword";
+    std::string salt = PasswordHasher::GenerateRandomSalt(16); // generate a 16-byte salt
+    auto hashWithSalt = PasswordHasher::HashPassword(password, salt);
+    // check if the salt is at the start of the hash
+    EXPECT_EQ(hashWithSalt.substr(0, 32), salt);
+    // hash again to check for consistency
+    auto sameHashWithSalt = PasswordHasher::HashPassword(password, salt);
+    EXPECT_EQ(hashWithSalt, sameHashWithSalt);
+}
+
+// tests that VerifyPassword returns true for correct password
+TEST_F(PasswordHasherTest, VerifiesCorrectPassword) {
+    std::string password = "correctPassword";
+    std::string salt = PasswordHasher::GenerateRandomSalt(16); // generate a 16-byte salt
+    auto hashWithSalt = PasswordHasher::HashPassword(password, salt);
+    EXPECT_TRUE(PasswordHasher::VerifyPassword(password, hashWithSalt));
+}
+
+// tests that VerifyPassword returns false for incorrect password
+TEST_F(PasswordHasherTest, FailsIncorrectPassword) {
+    std::string correctPassword = "correctPassword";
+    std::string incorrectPassword = "wrongPassword";
+    std::string salt = PasswordHasher::GenerateRandomSalt(16); // Generate a 16-byte salt
+    auto hashWithSalt = PasswordHasher::HashPassword(correctPassword, salt);
+    EXPECT_FALSE(PasswordHasher::VerifyPassword(incorrectPassword, hashWithSalt));
+}
+
+// ==================== UserHandler Tests ====================
+// fixture class for UserHandler tests
+class UserHandlerTest : public ::testing::Test {
+protected:
+    std::string testFilename = "test_users.txt";
+
+    void SetUp() override {
+        // ensure the file is empty before each test
+        std::ofstream ofs(testFilename, std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
+    }
+
+    void TearDown() override {
+        // remove the test file after each test
+        std::remove(testFilename.c_str());
+    }
+};
+
+// test adding a new user
+TEST_F(UserHandlerTest, AddUser) {
+    UserHandler handler(testFilename);
+    ASSERT_TRUE(handler.AddUser("testUser", "password"));
+
+    // verify that the file contains the new user
+    std::ifstream file(testFilename);
+    std::string line;
+    std::getline(file, line);
+    file.close();
+
+    // the line should contain the username and a hashed password
+    ASSERT_TRUE(line.find("testUser") != std::string::npos);
+}
+
+// test verifying a user with the correct password
+TEST_F(UserHandlerTest, VerifyCorrectPassword) {
+    UserHandler handler(testFilename);
+    handler.AddUser("testUser", "password");
+
+    ASSERT_TRUE(handler.VerifyUser("testUser", "password"));
+}
+
+// test verifying a user with an incorrect password
+TEST_F(UserHandlerTest, VerifyIncorrectPassword) {
+    UserHandler handler(testFilename);
+    handler.AddUser("testUser", "correctPassword");
+
+    ASSERT_FALSE(handler.VerifyUser("testUser", "wrongPassword"));
+}
+
+// test handling of a non-existing user
+TEST_F(UserHandlerTest, NonExistingUser) {
+    UserHandler handler(testFilename);
+    ASSERT_FALSE(handler.VerifyUser("nonExistingUser", "password"));
 }

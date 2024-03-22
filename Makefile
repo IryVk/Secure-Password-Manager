@@ -2,13 +2,13 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++14 -Iinclude -I/usr/include/crypto++
+CXXFLAGS = -Wall -std=c++17 -Iinclude -I/usr/include/crypto++
 
 # Linker flags
 LDFLAGS = -lcrypto -lcryptopp
 
 # Name of the executable
-TARGET = bin/main.exe
+TARGET = main.exe
 
 # Source directory
 SRC_DIR = src
