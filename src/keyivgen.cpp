@@ -6,6 +6,7 @@
 
 using namespace CryptoPP;
 
+// generate a key and iv using a password created by the user
 void KeyIVGenerator::GenerateKeyIV(const std::string& password, std::string& outKey, std::string& outIV, size_t keyLength, size_t ivLength) {
     // the total size needed to store both key and IV
     size_t totalSize = keyLength + ivLength;

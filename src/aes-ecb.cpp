@@ -6,8 +6,10 @@
 
 using namespace CryptoPP;
 
+// constructor
 AESECB::AESECB(const std::string& key) : key(key) {}
 
+// encrypt plaintext using AES in ECB mode
 std::string AESECB::Encrypt(const std::string& plaintext) {
     std::string ciphertext;
     // setup AES key and ECB mode. No IV is needed for ECB.
@@ -26,6 +28,7 @@ std::string AESECB::Encrypt(const std::string& plaintext) {
     return ciphertext;
 }
 
+// decrypt ciphertext using AES in ECB mode
 std::string AESECB::Decrypt(const std::string& ciphertext) {
     // convert from hex
     std::string ct = fromHex(ciphertext);
@@ -44,6 +47,7 @@ std::string AESECB::Decrypt(const std::string& ciphertext) {
     return decryptedText;
 }
 
+// utility function to convert string to hex
 std::string AESECB::toHex(const std::string& input) {
     std::string hex;
     StringSource ss(input, true,
@@ -54,6 +58,7 @@ std::string AESECB::toHex(const std::string& input) {
     return hex;
 }
 
+// utility function to convert hex to string
 std::string AESECB::fromHex(const std::string& input) {
     std::string decoded;
     StringSource ss(input, true,

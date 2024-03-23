@@ -7,13 +7,13 @@
 
 class AESCrypto {
 public:
-    AESCrypto(const CryptoPP::SecByteBlock& key, const CryptoPP::SecByteBlock& iv);
-    void EncryptFile(const std::string& inputFilename, const std::string& outputFilename);
-    void DecryptFile(const std::string& inputFilename, const std::string& outputFilename);
+    AESCrypto(const CryptoPP::SecByteBlock& key, const CryptoPP::SecByteBlock& iv); // constructor
+    void EncryptFile(const std::string& inputFilename, const std::string& outputFilename); // encrypt a file
+    void DecryptFile(const std::string& inputFilename, const std::string& outputFilename); // decrypt a file
 
 private:
-    CryptoPP::SecByteBlock key;
-    CryptoPP::SecByteBlock iv;
+    CryptoPP::SecByteBlock key; // key
+    CryptoPP::SecByteBlock iv; // initialization vector
 };
 
 #endif // AESCRYPTO_H

@@ -8,6 +8,7 @@ static const char kAllowedChars[] =
     "abcdefghijklmnopqrstuvwxyz"
     "!@#$%^&*()_+-=[]{}|;':,.<>/?";
 
+// generate a random password of the specified length
 std::string Generator::generate(size_t length) {
     std::string password;
 

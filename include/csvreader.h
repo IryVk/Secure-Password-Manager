@@ -5,15 +5,15 @@
 
 class CSVReader {
 private:
-    HashTable& hashtable;
-    std::string filename;
+    HashTable& hashtable; // reference to the hashtable
+    std::string filename; // filename of the CSV file
 
 public:
-    CSVReader(HashTable& hashtable, const std::string& filename) : hashtable(hashtable), filename(filename) {}
+    CSVReader(HashTable& hashtable, const std::string& filename) : hashtable(hashtable), filename(filename) {} // constructor
 
-    void load();
-    void save();
-    void addRow(const std::string& domain, const std::string& username, const std::string& password);
-    bool updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername="");
-    void deleteRow(const std::string& domain, const std::string& username);
+    void load(); // load the CSV file
+    void save(); // save the CSV file
+    void addRow(const std::string& domain, const std::string& username, const std::string& password); // add a new row
+    bool updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername=""); // update a row
+    void deleteRow(const std::string& domain, const std::string& username); // delete a row
 };
