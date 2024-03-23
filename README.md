@@ -87,4 +87,6 @@ DEMO VIDEO HERE
 
 ## Contact
 
-Arwa Essam Abdelaziz - aa2101585@tkh.edu.eg - arwa.abdelaziz.03@gmail.com
+Arwa Essam Abdelaziz
+aa2101585@tkh.edu.eg
+arwa.abdelaziz.03@gmail.com
