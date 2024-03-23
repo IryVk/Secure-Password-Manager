@@ -525,22 +525,3 @@ TEST_F(KeyIVGeneratorTest, HandlesEmptyPassword) {
     EXPECT_FALSE(iv.empty());
 }
 
-class CSVReaderTest2 : public ::testing::Test {
-protected:
-    HashTable hashtable;
-    std::string testFilename = "test_data.csv"; // Path to your test CSV file
-
-    void SetUp() override {
-        // create a temporary CSV file for testing
-        std::ofstream outFile(testFilename);
-        outFile << "495676536135009626,domain1.com,user1,password1\n";
-        outFile << "495676536136883787,domain2.com,user2,password2\n";
-        outFile << "495676536138757948,domain3.com,user3,password3\n";
-        outFile.close();
-    }
-
-    void TearDown() override {
-        // Cleanup: remove the test file
-        //fs::remove(testFilename);
-    }
-};
