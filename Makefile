@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++17 -Iinclude -I/usr/include/crypto++
+CXXFLAGS = -Wall -std=c++17 -Wno-deprecated-declarations -Iinclude -I/usr/include/crypto++
 
 # Linker flags
 LDFLAGS = -lcrypto -lcryptopp

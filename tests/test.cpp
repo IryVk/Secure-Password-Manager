@@ -12,6 +12,8 @@
 #include "osrng.h"
 #include "passhash.h"
 #include "userhandler.h"
+#include "aes-ecb.h"
+#include "keyivgen.h"
 
 using namespace CryptoPP;
 
@@ -416,4 +418,108 @@ TEST_F(UserHandlerTest, VerifyIncorrectPassword) {
 TEST_F(UserHandlerTest, NonExistingUser) {
     UserHandler handler(testFilename);
     ASSERT_FALSE(handler.VerifyUser("nonExistingUser", "password"));
+}
+
+// ==================== AESECB Tests ====================
+// Fixture class for AESEncryption tests
+class AESEncryptionTest : public ::testing::Test {
+protected:
+};
+
+// test encryption and decryption for a basic string
+TEST_F(AESEncryptionTest, EncryptDecryptBasicString) {
+    std::string key = "16bytesecretkey!"; 
+    AESECB aes(key);
+
+    std::string plaintext = "Hello, World!";
+    std::string ciphertext = aes.Encrypt(plaintext);
+    std::string decryptedText = aes.Decrypt(ciphertext);
+
+    EXPECT_EQ(plaintext, decryptedText);
+}
+
+// test encryption and decryption for an empty string
+TEST_F(AESEncryptionTest, EncryptDecryptEmptyString) {
+    std::string key = "16bytesecretkey!";
+    AESECB aes(key);
+
+    std::string plaintext = "";
+    std::string ciphertext = aes.Encrypt(plaintext);
+    std::string decryptedText = aes.Decrypt(ciphertext);
+
+    EXPECT_EQ(plaintext, decryptedText);
+}
+
+// test encryption and decryption for a string that is exactly one block size
+TEST_F(AESEncryptionTest, EncryptDecryptOneBlockSize) {
+    std::string key = "16bytesecretkey!";
+    AESECB aes(key);
+
+    // AES block size is 16 bytes, so we use a 16-byte plaintext
+    std::string plaintext = "1234567890ABCDEF";
+    std::string ciphertext = aes.Encrypt(plaintext);
+    std::string decryptedText = aes.Decrypt(ciphertext);
+
+    EXPECT_EQ(plaintext, decryptedText);
+}
+
+// test encryption and decryption for a string that is 1 byte less than a block size
+TEST_F(AESEncryptionTest, EncryptDecryptOneByteLessThanBlockSize) {
+    std::string key = "16bytesecretkey!";
+    AESECB aes(key);
+
+    // AES block size is 16 bytes, so we use a 15-byte plaintext
+    std::string plaintext = "1234567890ABCDE";
+    std::string ciphertext = aes.Encrypt(plaintext);
+    std::string decryptedText = aes.Decrypt(ciphertext);
+
+    EXPECT_EQ(plaintext, decryptedText);
+}
+
+// ==================== KeyIvGenerator Tests ====================
+class KeyIVGeneratorTest : public ::testing::Test {
+protected:
+};
+
+// test that the same password produces the same key and IV across multiple calls
+TEST_F(KeyIVGeneratorTest, ConsistentOutputForSamePassword) {
+    std::string password = "testPassword";
+    std::string key1, iv1, key2, iv2;
+    size_t keyLength = 32; // for AES-256
+    size_t ivLength = 16;  // common IV length for AES
+
+    KeyIVGenerator::GenerateKeyIV(password, key1, iv1, keyLength, ivLength);
+    KeyIVGenerator::GenerateKeyIV(password, key2, iv2, keyLength, ivLength);
+
+    EXPECT_EQ(key1, key2);
+    EXPECT_EQ(iv1, iv2);
+}
+
+// test that different passwords produce different keys and IVs
+TEST_F(KeyIVGeneratorTest, DifferentOutputForDifferentPasswords) {
+    std::string password1 = "testPassword1";
+    std::string password2 = "testPassword2";
+    std::string key1, iv1, key2, iv2;
+    size_t keyLength = 32; // for AES-256
+    size_t ivLength = 16;  // common IV length for AES
+
+    KeyIVGenerator::GenerateKeyIV(password1, key1, iv1, keyLength, ivLength);
+    KeyIVGenerator::GenerateKeyIV(password2, key2, iv2, keyLength, ivLength);
+
+    EXPECT_NE(key1, key2);
+    EXPECT_NE(iv1, iv2);
+}
+
+// test handling of an empty password
+TEST_F(KeyIVGeneratorTest, HandlesEmptyPassword) {
+    std::string password = "";
+    std::string key, iv;
+    size_t keyLength = 32; // for AES-256
+    size_t ivLength = 16;  // common IV length for AES
+
+    KeyIVGenerator::GenerateKeyIV(password, key, iv, keyLength, ivLength);
+
+    // verify that an empty password does not crash and produces some output
+    EXPECT_FALSE(key.empty());
+    EXPECT_FALSE(iv.empty());
 }
