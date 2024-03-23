@@ -2,16 +2,18 @@
 
 // load() reads the CSV file and populates the hashtable with the data
 void CSVReader::load() {
+    // open the CSV file
     std::ifstream file(filename);
     std::string line;
     while (std::getline(file, line)) {
+        // parse the line
         std::istringstream iss(line);
         std::string hash, domain, username, password;
         std::getline(iss, hash, ',');
         std::getline(iss, domain, ',');
         std::getline(iss, username, ',');
         std::getline(iss, password, ',');
-
+        // insert the data into the hashtable
         size_t index = std::stoul(hash) % hashtable.numBuckets; 
         hashtable.insertAtIndex(index, domain, username, password);
     }
