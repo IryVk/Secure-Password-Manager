@@ -1,4 +1,5 @@
 <a name="readme-top"></a>
+
 # Secure Password Manager
 
 ## Description
@@ -46,6 +47,9 @@ Before installing the Secure Password Manager, you must install Crypto++ library
    ```
 
 ### Building 
+
+Alternatively, a compiled binary is found in the `bin` directory. This binary was compiled and tested on Ubuntu 20.04.
+
 1. Clone the repository
    ```bash
    git clone https://github.com/IryVk/Secure-Password-Manager.git
@@ -58,7 +62,11 @@ Before installing the Secure Password Manager, you must install Crypto++ library
    ```bash
    make
    ```
-4. Run the compiled binaries.
+4. Build the unit tests
+   ```bash
+   cd tests && make && cd ..
+   ```
+5. Run the compiled binaries.
    ```bash
    # the main program
    ./password_manager
@@ -81,12 +89,36 @@ DEMO VIDEO HERE
 
 ### File Structure
 
+```bash
+Secure-Password-Manager/  # root
+├── assets/  # user files are stored here
+├── bin/  # compiled binaries
+├── include/  # header files
+├── lib/  # compiled static libraries
+├── obj/  # compiled object files
+├── src/  # source cpp files
+├── test/  # unittests
+│   └── Makefile  # make file for unit tests
+├── .gitignore
+├── LICENSE
+├── Makefile  # make file for program
+└── README.md
+```
+
 ### Features
+
++ Handles passwords for multiple users
++ Encrypts and authenticates password files using AES in GCM mode
++ Generates secure random passwords and saves them
++ Add, Update or Delete passwords
++ Fast password lookup using hashtable and linked list (O(1) lookup)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Contact
 
 Arwa Essam Abdelaziz
-aa2101585@tkh.edu.eg
-arwa.abdelaziz.03@gmail.com
+
+aa2101585@tkh.edu.eg - arwa.abdelaziz.03@gmail.com
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
