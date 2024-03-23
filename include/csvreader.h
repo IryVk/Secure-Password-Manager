@@ -1,3 +1,6 @@
+#ifndef CSVREADER_H
+#define CSVREADER_H
+
 #include "hashtable.h"
 #include <fstream>
 #include <sstream>
@@ -17,3 +20,5 @@ public:
     bool updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername=""); // update a row
     void deleteRow(const std::string& domain, const std::string& username); // delete a row
 };
+
+#endif // CSVREADER_H

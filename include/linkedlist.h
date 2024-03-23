@@ -1,4 +1,4 @@
-// check if alreadu compiled
+// check if already compiled
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
