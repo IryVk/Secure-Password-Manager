@@ -180,7 +180,7 @@ namespace fs = std::filesystem;
 class CSVReaderTest : public ::testing::Test {
 protected:
     HashTable hashtable;
-    std::string testFilename = "../assets/test_data.csv"; // Path to your test CSV file
+    std::string testFilename = "test_data.csv"; // Path to your test CSV file
 
     void SetUp() override {
         // create a temporary CSV file for testing

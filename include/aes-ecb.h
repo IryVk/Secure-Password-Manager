@@ -16,6 +16,10 @@ public:
 
 private:
     std::string key;
+    // utility to cast to hex
+    std::string toHex(const std::string& input);
+    // utility to cast from hex
+    std::string fromHex(const std::string& input);
 };
 
 #endif // AESECB_H

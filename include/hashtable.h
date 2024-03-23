@@ -14,11 +14,11 @@ class HashTable {
 friend class CSVReader;
 private:
     Bucket* buckets; // pointer to an array of Bucket
-    size_t numBuckets;
     size_t hash(const std::string& key) const; // hash function
     static const size_t defaultSize = 2053; // default number of buckets (prime number)
 
 public:
+    size_t numBuckets; // number of buckets
     HashTable(size_t numBuckets = defaultSize);
     ~HashTable();
     void insert(const std::string& domain, const std::string& username="", const std::string& password=""); // inserts key into a new node, with key as the first string in the node's array

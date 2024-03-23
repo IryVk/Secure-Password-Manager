@@ -8,8 +8,10 @@
 
 using namespace CryptoPP;
 
+// Constructor
 AESCrypto::AESCrypto(const SecByteBlock& key, const SecByteBlock& iv) : key(key), iv(iv) {}
 
+// Encrypts a file
 void AESCrypto::EncryptFile(const std::string& inputFilename, const std::string& outputFilename) {
     GCM<AES>::Encryption encryption;
     encryption.SetKeyWithIV(key, key.size(), iv);
@@ -31,6 +33,7 @@ void AESCrypto::EncryptFile(const std::string& inputFilename, const std::string&
     ); 
 }
 
+// Decrypts a file
 void AESCrypto::DecryptFile(const std::string& inputFilename, const std::string& outputFilename) {
     GCM<AES>::Decryption decryption;
     decryption.SetKeyWithIV(key, key.size(), iv);
