@@ -38,10 +38,12 @@ void CSVReader::addRow(const std::string& domain, const std::string& username, c
 }
 
 // updateRow() updates an existing row in the CSV file
-void CSVReader::updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername) {
-    if (hashtable.update(domain, username, newPassword)) {
+bool CSVReader::updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername) {
+    if (hashtable.update(domain, username, newPassword, newUsername)) {
         save(); // reflect changes in the CSV file if update was successful
+        return true;
     }
+    return false;
 }
 
 // deleteRow() deletes a row from the CSV file

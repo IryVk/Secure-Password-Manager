@@ -106,8 +106,9 @@ bool LinkedList::update(const std::string& domain, const std::string& username, 
     if (current != nullptr) {
         // check if both domain and username match (case-insensitive)
         if (equalsIgnoreCase(current->data[0], domain) && equalsIgnoreCase(current->data[1], username)) {
-            if (!newUsername.empty())
+            if (newUsername != ""){
                 current->data[1] = newUsername; // update username
+            }
             current->data[2] = newPassword; // update password
             return true; // successfully updated
         }

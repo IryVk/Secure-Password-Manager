@@ -17,6 +17,11 @@
 
 using namespace CryptoPP;
 
+// globals to store key, iv and username
+std::string KEY = "";
+std::string IV = "";
+std::string USER = "";
+
 void cleanup();
 void clearCin();
 int getInt(std::string& prompt);
@@ -37,7 +42,7 @@ int main() {
     // clean up unenctypted files
     std::atexit(cleanup);
     // Register the signal handler for SIGINT
-    // std::signal(SIGINT, signalHandler);
+    std::signal(SIGINT, signalHandler);
 
     // display initial menu
     std::cout << "Welcome to the Password Manager!\n";
@@ -68,6 +73,11 @@ int main() {
         }
         break;
     }
+
+    // put data into globals
+    KEY = key;
+    IV = iv;
+    USER = username;
 
     // unencrypt passwords file
     // cast key and iv to SecByteBlock
@@ -187,13 +197,18 @@ bool updatePassword(CSVReader& reader,int recordNumber, Bucket* index, std::stri
     AESECB aes(key);
     password = aes.Encrypt(password);
     // update the password in the hash table
+    std::cout << password << std::endl;
+    std::cout << username << std::endl;
     Node* node = index->list.getHead();
     int counter = 0;
     while (node != nullptr) {
         counter++;
         if (counter == recordNumber) {
-            reader.updateRow(node->data[0], node->data[1], password, username);
-            std::cout << "Record updated successfully.\n";
+            std::cout << node->data[0] << std::endl;
+            std::cout << node->data[1] << std::endl;
+            if (reader.updateRow(node->data[0], node->data[1], password, username)){
+                std::cout << "Record updated successfully.\n";
+            }
             return true;
         }
         node = node->next;
@@ -283,6 +298,8 @@ bool addPassword(CSVReader& reader, HashTable& ht, std::string& key) {
     password = aes.Encrypt(password);
     // add the password to the hash table
     reader.addRow(domain, username, password);
+
+    std::cout << "Password added successfully.\n";
     return true;
 }
 
@@ -295,13 +312,24 @@ void displayMenu2() {
 
 void cleanup() {
     std::cout << "Cleaning up...\n";
-    // delete unencrypted files
+    // encrypt unencrypted files
+    if (KEY == "" || IV == "" || USER == "") {
+        return;
+    }
+    // cast key and iv to SecByteBlock
+    SecByteBlock keyblock((byte*)KEY.data(), KEY.size());
+    SecByteBlock ivblock((byte*)IV.data(), IV.size());
+    AESCrypto aesCrypto(keyblock, ivblock);
+    // encrypt passwords file
+    aesCrypto.EncryptFile("assets/" + USER + "_decrypted.csv", "assets/" + USER + ".csv");
+    // remove unencrypted file
+    std::remove(("assets/" + USER + "_decrypted.csv").c_str());
 }
 
-// Signal handler for SIGINT
+// signal handler for SIGINT
 void signalHandler(int signal) {
-    std::cout << "Signal " << signal << " caught.\n";
-    cleanup();
+    std::cout << " Signal " << signal << " caught.\n";
+    // exiting will invoke cleanup()
     std::exit(EXIT_SUCCESS);
 }
 

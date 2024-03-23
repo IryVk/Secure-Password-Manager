@@ -14,6 +14,6 @@ public:
     void load();
     void save();
     void addRow(const std::string& domain, const std::string& username, const std::string& password);
-    void updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername="");
+    bool updateRow(const std::string& domain, const std::string& username, const std::string& newPassword, const std::string& newUsername="");
     void deleteRow(const std::string& domain, const std::string& username);
 };

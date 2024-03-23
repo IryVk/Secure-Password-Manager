@@ -110,11 +110,12 @@ TEST_F(LinkedListTest, UpdateNonExistentElement) {
 
 TEST_F(LinkedListTest, UpdateExistingElement) {
     list.add("domain.com", "user", "pass");
-    EXPECT_TRUE(list.update("domain.com", "user", "newPass"));
+    EXPECT_TRUE(list.update("domain.com", "user", "newPass", "newUser"));
     // access the node and verify the data has been updated
-    Node* node = list.getNode("domain.com", "user");
+    Node* node = list.getNode("domain.com", "newUser");
     ASSERT_NE(node, nullptr);
     EXPECT_EQ(node->data[2], "newPass");
+    EXPECT_EQ(node->data[1], "newUser");
 }
 
 // ==================== HashTable Tests ====================
@@ -233,7 +234,7 @@ TEST_F(CSVReaderTest, AddRow) {
 TEST_F(CSVReaderTest, UpdateRow) {
     CSVReader reader(hashtable, testFilename);
     reader.load();
-    reader.updateRow("domain1.com", "user1", "newPassword");
+    reader.updateRow("domain1.com", "user1", "newwwPassword");
     reader.save();
 
     // verify update
@@ -244,7 +245,7 @@ TEST_F(CSVReaderTest, UpdateRow) {
     ASSERT_NE(bucket, nullptr);
     Node* node = bucket->list.getNode("domain1.com", "user1");
     ASSERT_NE(node, nullptr);
-    EXPECT_EQ(node->data[2], "newPassword");
+    EXPECT_EQ(node->data[2], "newwwPassword");
 }
 
 TEST_F(CSVReaderTest, DeleteRow) {
@@ -523,3 +524,23 @@ TEST_F(KeyIVGeneratorTest, HandlesEmptyPassword) {
     EXPECT_FALSE(key.empty());
     EXPECT_FALSE(iv.empty());
 }
+
+class CSVReaderTest2 : public ::testing::Test {
+protected:
+    HashTable hashtable;
+    std::string testFilename = "test_data.csv"; // Path to your test CSV file
+
+    void SetUp() override {
+        // create a temporary CSV file for testing
+        std::ofstream outFile(testFilename);
+        outFile << "495676536135009626,domain1.com,user1,password1\n";
+        outFile << "495676536136883787,domain2.com,user2,password2\n";
+        outFile << "495676536138757948,domain3.com,user3,password3\n";
+        outFile.close();
+    }
+
+    void TearDown() override {
+        // Cleanup: remove the test file
+        //fs::remove(testFilename);
+    }
+};
