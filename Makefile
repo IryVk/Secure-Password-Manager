@@ -8,7 +8,7 @@ CXXFLAGS = -Wall -std=c++17 -Wno-deprecated-declarations -Iinclude -I/usr/includ
 LDFLAGS = -lcrypto -lcryptopp
 
 # Name of the executable
-TARGET = main.exe
+TARGET = password_manager
 
 # Source directory
 SRC_DIR = src

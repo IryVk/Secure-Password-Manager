@@ -21,10 +21,14 @@ void manipulatePassword(CSVReader& reader, HashTable& ht, Bucket* index, std::st
     std::string input;
     // loop to handle invalid inputs
     while (true) {
-        std::cout << "Choose an option:\n";
-        std::cout << "UPDATE/SHOW/DELETE <RECORD_NUMBER>\n";
-        std::cout << "BACK - to exit this menu\n";
+        std::cout << "\n=== UPDATE/SHOW/DELETE a Password Record ===\n";
+        std::cout << "Commands:\n";
+        std::cout << "  UPDATE <RECORD_NUMBER>\n";
+        std::cout << "  SHOW <RECORD_NUMBER>\n";
+        std::cout << "  DELETE <RECORD_NUMBER>\n";
+        std::cout << "  BACK - to exit this menu\n";
         std::cout << "Example: UPDATE 1\n";
+        std::cout << "==========================================\n";
         std::cout << "Enter your choice: ";
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::getline(std::cin, input); // read the full line of input
@@ -215,12 +219,15 @@ bool addPassword(CSVReader& reader, HashTable& ht, std::string& key) {
 
 // displays the main menu after the user logs in
 void displayMenu2() {
+    std::cout << "\n--------------- Main Menu ---------------\n";
     std::cout << "1. Add Password\n";
     std::cout << "2. Search Passwords\n";
     std::cout << "3. View Passwords\n";
     std::cout << "4. Generate Password\n";
     std::cout << "5. Exit\n";
+    std::cout << "-----------------------------------------\n";
 }
+
 
 // utility function that clears the input buffer
 void clearCin() {
@@ -248,10 +255,13 @@ int getInt(std::string& prompt) {
 
 // displays the initial menu
 void displayInitMenu() {
+    std::cout << "\n================= Password Manager =================\n";
     std::cout << "1. Create User\n";
     std::cout << "2. Log In\n";
     std::cout << "3. Exit\n";
+    std::cout << "====================================================\n";
 }
+
 
 // creates a new user
 bool createUser(std::string& key, std::string& iv, std::string& user) {
@@ -260,6 +270,7 @@ bool createUser(std::string& key, std::string& iv, std::string& user) {
     std::string password;
 
     // verify username and password length
+    std::cout << "\nCreating New User...\n";
     while (true) {
         std::string prompt = "Enter your username: ";
         std::cout << prompt;
@@ -298,14 +309,18 @@ bool createUser(std::string& key, std::string& iv, std::string& user) {
         AESCrypto aesCrypto(keyblock, ivblock);
         aesCrypto.EncryptFile(filename, filename);
         return true;
+        std::cout << "User created successfully.\n";
+        std::cout << "--------------------------------\n";
     } else {
         std::cout << "Failed to create user.\n";
+        std::cout << "--------------------------------\n";
         return false;
     }
 }
 
 // verifies an existing user
 bool verifyUser(std::string& key, std::string& iv, std::string& user) {
+    std::cout << "\nUser Verification Process...\n";
     // read user input
     std::string username;
     std::string password;
@@ -324,15 +339,19 @@ bool verifyUser(std::string& key, std::string& iv, std::string& user) {
         KeyIVGenerator keyIVGenerator;
         keyIVGenerator.GenerateKeyIV(password, key, iv);
         user = username;
+        std::cout << "User verified successfully.\n";
+        std::cout << "--------------------------------\n";
         return true;
     } else {
         std::cout << "Failed to verify user.\n";
+        std::cout << "--------------------------------\n";
         return false;
     }
 }
 
 // generates a random password
 void generatePassword(CSVReader& reader, HashTable& ht, std::string& key) {
+    std::cout << "\nGenerating Secure Password...\n";
     // make a password generator object
     Generator generator;
     // read user input
@@ -348,11 +367,11 @@ void generatePassword(CSVReader& reader, HashTable& ht, std::string& key) {
     // generate a password of length 16
     std::string password = generator.generate(16);
     // display the generated password
-    std :: cout << "Generated password: " << password << "\n";
+    std::cout << "Generated password: " << password << "\n";
     // encrypt the password
     AESECB aes(key);
     password = aes.Encrypt(password);
     // add the password to the csv
     reader.addRow(domain, username, password);
-    std::cout << "Password saved successfully.\n";
+    std::cout << "--------------------------------\n";
 }
