@@ -45,6 +45,10 @@ Before installing the Secure Password Manager, you must install Crypto++ library
    ```bash
    sudo apt-get install libcrypto++-dev libcrypto++-doc libcrypto++-utils
    ```
+3. Install OpenSSL
+   ```bash
+   sudo apt-get install libssl-dev
+   ```
 
 ### Building 
 
