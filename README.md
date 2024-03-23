@@ -35,6 +35,7 @@ This project is a password manager application developed in C++ as part of the c
 ## Installation
 
 ### Dependencies
+RUN ON LINUX
 Before installing the Secure Password Manager, you must install Crypto++ library on your Linux system.
 
 1. Update your packaged list:
@@ -51,8 +52,6 @@ Before installing the Secure Password Manager, you must install Crypto++ library
    ```
 
 ### Building 
-
-Alternatively, a compiled binary is found in the `bin` directory. This binary was compiled and tested on Ubuntu 20.04.
 
 1. Clone the repository
    ```bash
@@ -77,6 +76,15 @@ Alternatively, a compiled binary is found in the `bin` directory. This binary wa
    # unittests
    tests/run_tests
    ```
+
+(NOT RECCOMMENDED)
+
+Alternatively, a compiled binary is found in the `bin` directory. This binary was compiled and tested on Ubuntu 20.04. Move it as below:
+```bash
+cd bin && mv password_manager ../password_manager && mv run_tests ../tests/run_tests
+```
+Then run the compiled binaries
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Usage
