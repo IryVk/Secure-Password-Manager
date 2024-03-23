@@ -183,6 +183,7 @@ int searchPasswords(CSVReader& reader, HashTable& ht, Bucket** index) {
             std::cout << "Record: " << counter << "\n";
             std::cout << "Username: " << node->data[1] << "\n";
             std::cout << "Password: *********" << "\n";
+            std::cout << "--------\n";
         }
         node = node->next;
     }
@@ -311,11 +312,10 @@ bool createUser(std::string& key, std::string& iv, std::string& user) {
         return true;
         std::cout << "User created successfully.\n";
         std::cout << "--------------------------------\n";
-    } else {
-        std::cout << "Failed to create user.\n";
-        std::cout << "--------------------------------\n";
-        return false;
     }
+    std::cout << "Failed to create user.\n";
+    std::cout << "--------------------------------\n";
+    return false;
 }
 
 // verifies an existing user
