@@ -2,7 +2,6 @@
 #define HASHTABLE_H
 
 #include <string>
-#include <vector>
 #include "linkedlist.h"
 
 struct Bucket {
