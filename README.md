@@ -89,7 +89,11 @@ Then run the compiled binaries
 
 ## Usage
 
-DEMO VIDEO HERE
+
+
+[DEMO](https://github.com/IryVk/Secure-Password-Manager/assets/114566375/67fb2a83-221c-4098-8a08-1d00d2530649)
+
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
